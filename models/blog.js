@@ -11,11 +11,7 @@ const blogschema = new Schema({
     },
     coverImage: {
         type: String,
-<<<<<<< HEAD
         required: false,
-=======
-        required: false,     
->>>>>>> da15cb3 (update code)
     },
     createdBy: {
         type: Schema.Types.ObjectId,
@@ -27,15 +23,7 @@ const blogschema = new Schema({
             ref: "comment",
         }
     ]
-<<<<<<< HEAD
 }, { timestamps: true });
 
 const blog = model("blog", blogschema);
 module.exports = blog;
-=======
-    //“What comments belong to this blog?”
-}, { timestamps: true });  
-
-const blog = model("blog", blogschema);
-module.exports = blog;     
->>>>>>> da15cb3 (update code)
