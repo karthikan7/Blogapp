@@ -1,0 +1,252 @@
+Here's the typical flow in your Express + JWT + Cookie setup.
+
+1. User opens Sign In page
+
+Browser requests:
+
+GET /signin
+
+Server renders:
+
+res.render("signin");
+2. User submits login form
+
+Form:
+
+<form action="/user/signin" method="POST">
+
+User enters:
+
+Email: john@gmail.com
+Password: 123456
+
+Browser sends:
+
+POST /user/signin
+
+Body:
+
+{
+  email: "john@gmail.com",
+  password: "123456"
+}
+3. Route receives request
+router.post("/signin", async (req, res) => {
+
+Extract data:
+
+const { email, password } = req.body;
+
+Now:
+
+email = "john@gmail.com";
+password = "123456";
+4. Check credentials
+const token =
+  await User.matchPasswordandgeneratetoken(
+    email,
+    password
+  );
+
+Inside this function:
+
+Find user
+const user = await User.findOne({ email });
+Compare password
+const isMatch = comparePassword(
+  password,
+  user.password
+);
+
+If wrong:
+
+throw new Error("Incorrect password");
+
+If correct:
+
+continue.
+
+5. Create JWT token
+
+Example:
+
+const payload = {
+  _id: user._id,
+  fullname: user.fullname,
+  email: user.email,
+};
+
+Create token:
+
+const token = jwt.sign(
+  payload,
+  SECRET
+);
+
+Example result:
+
+eyJhbGciOiJIUzI1NiIs...
+
+This is the moment the token is created.
+
+6. Send token to browser
+res.cookie("token", token);
+
+Browser stores:
+
+token = eyJhbGciOiJIUzI1NiIs...
+
+Then:
+
+.redirect("/")
+
+User goes to homepage.
+
+7. Browser makes another request
+
+User visits:
+
+GET /blog/123
+
+Browser automatically sends:
+
+Cookie:
+token=eyJhbGciOiJIUzI1NiIs...
+
+You do not manually send it.
+
+Browser handles this.
+
+8. Authentication middleware runs
+
+Before route:
+
+app.use(
+  checkforauthentication("token")
+);
+
+Middleware executes:
+
+const tokencookievalue =
+  req.cookies.token;
+
+Reads cookie.
+
+9. Verify token
+const userpayload =
+  validatetoken(tokencookievalue);
+
+Usually:
+
+jwt.verify(token, SECRET);
+
+JWT checks:
+
+Is signature valid?
+Was token created using same SECRET?
+Is token expired? (if expiry is used)
+
+If verification fails:
+
+catch(error)
+
+User is treated as unauthenticated.
+
+10. Recover payload
+
+After verification:
+
+userpayload =
+{
+  _id: "...",
+  fullname: "John",
+  email: "john@gmail.com"
+}
+
+This data comes from the payload you originally signed.
+
+11. Attach user to request
+req.user = userpayload;
+
+Now request contains:
+
+req.user
+12. Route handler executes
+
+Example:
+
+router.get("/add-blog",
+  (req,res)=>{
+
+Inside route:
+
+console.log(req.user);
+
+Output:
+
+{
+  _id: "...",
+  fullname: "John",
+  email: "john@gmail.com"
+}
+
+Now you know who is logged in.
+
+13. Create blog
+await Blog.create({
+  title,
+  body,
+  createdBy: req.user._id
+});
+
+You don't ask the user for their ID.
+
+You get it from:
+
+req.user._id
+
+which came from the verified token.
+
+Complete flow
+User enters email/password
+          ↓
+POST /signin
+          ↓
+req.body
+          ↓
+Find user in DB
+          ↓
+Verify password
+          ↓
+Create JWT token
+          ↓
+Store token in cookie
+          ↓
+Redirect
+          ↓
+Browser saves cookie
+          ↓
+Future request
+          ↓
+Browser sends cookie
+          ↓
+Middleware reads cookie
+          ↓
+jwt.verify()
+          ↓
+Payload extracted
+          ↓
+req.user = payload
+          ↓
+Route runs
+          ↓
+req.user available everywhere
+
+A useful way to remember it:
+
+req.body  = data user sends now
+
+JWT token = proof user already logged in
+
+req.user  = user information recovered
+            from verified token

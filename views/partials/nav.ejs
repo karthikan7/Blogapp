@@ -1,0 +1,162 @@
+<style>
+  .custom-nav {
+    background: linear-gradient(
+      90deg,
+      #0b1020,
+      #1a103d,
+      #0b1020
+    );
+    border-bottom: 1px solid rgba(129, 140, 248, 0.15);
+    backdrop-filter: blur(20px);
+  }
+
+  .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ffffff !important;
+  }
+
+  .nav-link {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #818cf8 !important;
+  }
+
+  .form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  .form-control::placeholder {
+    color: #94a3b8;
+  }
+
+  .form-control:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #818cf8;
+    color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.15);
+  }
+
+  .btn-search {
+    border: 1px solid #818cf8;
+    color: #818cf8;
+    transition: all 0.3s ease;
+  }
+
+  .btn-search:hover {
+    background: #818cf8;
+    color: #fff;
+  }
+
+  .dropdown-menu {
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .dropdown-item {
+    color: #e2e8f0;
+  }
+
+  .dropdown-item:hover {
+    background: #1e293b;
+    color: #818cf8;
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark custom-nav">
+  <div class="container-fluid">
+
+    <a class="navbar-brand" href="/">
+      BLOGIFY
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link active" href="/">
+            Home
+          </a>
+        </li>
+
+        <% if (user) { %>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/add">
+              Add Blog
+            </a>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <%= user.fullname %>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href="/user/logout">
+                  Logout
+                </a>
+              </li>
+            </ul>
+
+          </li>
+
+        <% } else { %>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/user/signin">
+              Sign In
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/user/signup">
+              Create Account
+            </a>
+          </li>
+
+        <% } %>
+
+      </ul>
+
+      <form class="d-flex">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search stories..."
+        >
+        <button class="btn btn-search" type="submit">
+          Search
+        </button>
+      </form>
+
+    </div>
+  </div>
+</nav>

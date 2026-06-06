@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title><%= blog.title %></title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #06080f;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .blog-page {
+            max-width: 720px;
+            margin: auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blog-title {
+            font-size: 42px;
+            color: #eee8ff;
+            margin-bottom: 20px;
+        }
+
+        .author-bar {
+            padding: 10px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .cover-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .blog-body {
+            color: #9aa4b2;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        /* COMMENTS */
+        .comment-box {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .comment {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .comment strong {
+            color: #7c6fee;
+        }
+
+        .comment p {
+            color: #cbd5e1;
+            margin-left: 42px;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comment-form input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .comment-form button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            background: #7c6fee;
+            color: white;
+            cursor: pointer;
+        }
+
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-user img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+
+<%- include('./partials/nav') %>
+
+<div class="blog-page">
+
+    <h1 class="blog-title"><%= blog.title %></h1>
+
+    <div class="author-bar">
+        <%= blog.createdBy?.fullname || "Author" %>
+    </div>
+
+    <% if (blog.coverImage) { %>
+        <img src="<%= blog.coverImage %>" class="cover-img">
+    <% } %>
+
+    <div class="blog-body">
+        <%= blog.body %>
+    </div>
+
+    <!-- ================= COMMENTS (FIXED FINAL) ================= -->
+
+    <div class="comment-box">
+
+        <h3 style="color:#c4b9ff;">
+            Comments (<%= comments ? comments.length : 0 %>)
+        </h3>
+
+        <form class="comment-form" action="/blog/comment/<%= blog._id %>" method="POST">
+            <input type="text" name="content" placeholder="Write a comment..." required>
+            <button type="submit">Post</button>
+        </form>
+
+        <% if (comments && comments.length > 0) { %>
+
+            <% comments.forEach(comment => { %>
+
+                <div class="comment">
+
+                    <div class="comment-user">
+
+                        <img src="<%= comment.createdBy?.profileimageurl || '/user.jpg' %>">
+
+                        <strong>
+                            <%= comment.createdBy?.fullname || "User" %>
+                        </strong>
+
+                    </div>
+
+                    <p>
+                        <%= comment.content %>
+                    </p>
+
+                </div>
+
+            <% }) %>
+
+        <% } else { %>
+
+            <p style="color:gray;">No comments yet</p>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+</body>
+</html>

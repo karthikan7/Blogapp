@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Write a Story</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #06080f;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .orb1 { width: 500px; height: 500px; background: #5b4cdb; top: -150px; left: -150px; }
+        .orb2 { width: 350px; height: 350px; background: #db4ca0; bottom: 0; right: -100px; }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 660px;
+            margin: 0 auto;
+            padding: 56px 24px 90px;
+            animation: fadeUp 0.6s both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 22px;
+            padding: 36px 40px 40px;
+            backdrop-filter: blur(16px);
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .form-header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #5b4cdb, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 6px 18px rgba(91,76,219,0.35);
+        }
+
+        .form-header-text h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #eee8ff;
+            margin-bottom: 2px;
+        }
+
+        .form-header-text p {
+            font-size: 12px;
+            color: #3d4a5c;
+            font-weight: 400;
+        }
+
+        .field-group { margin-bottom: 22px; }
+
+        .field-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 11px 15px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            color: #c4b9ff;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .field-input::placeholder { color: #2d3748; }
+
+        .field-input:focus {
+            border-color: rgba(124,111,238,0.45);
+            box-shadow: 0 0 0 3px rgba(124,111,238,0.09);
+        }
+
+        textarea.field-input {
+            resize: none;
+            min-height: 130px;
+            line-height: 1.7;
+        }
+
+        .title-input {
+            font-size: 18px;
+            font-weight: 600;
+            padding: 9px 0;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            border-radius: 0;
+            background: transparent;
+            color: #eee8ff;
+        }
+
+        .title-input:focus {
+            border-bottom-color: rgba(124,111,238,0.5);
+            box-shadow: none;
+        }
+
+        .char-hint {
+            font-size: 10px;
+            color: #2d3748;
+            margin-top: 5px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .upload-zone {
+            border: 1.5px dashed rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 26px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            background: rgba(255,255,255,0.02);
+            position: relative;
+        }
+
+        .upload-zone:hover {
+            background: rgba(124,111,238,0.05);
+            border-color: rgba(124,111,238,0.28);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            font-size: 26px;
+            color: rgba(124,111,238,0.3);
+            margin-bottom: 8px;
+        }
+
+        .upload-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 3px;
+        }
+
+        .upload-hint {
+            font-size: 11px;
+            color: #2d3748;
+            font-weight: 300;
+        }
+
+        .upload-preview {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .preview-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 9px;
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
+
+        .preview-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #c4b9ff;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-meta {
+            font-size: 11px;
+            color: #3d4a5c;
+        }
+
+        .preview-remove {
+            margin-left: auto;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #4a5568;
+            cursor: pointer;
+            font-size: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.12s, color 0.12s;
+        }
+
+        .preview-remove:hover {
+            background: rgba(255,255,255,0.08);
+            color: #eee8ff;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.05);
+            margin: 26px 0;
+        }
+
+        .form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-draft {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.03);
+            color: #4a5568;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 999px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.12s, color 0.12s;
+        }
+
+        .btn-draft:hover {
+            background: rgba(255,255,255,0.06);
+            color: #7a8a9e;
+        }
+
+        .btn-publish {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 26px;
+            background: linear-gradient(135deg, #5b4cdb, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(91,76,219,0.38);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-publish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(91,76,219,0.5);
+        }
+
+        .btn-publish:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+
+    <%- include('./partials/nav') %>
+
+    <div class="page-wrap">
+        <div class="form-card">
+
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i class="bi bi-pencil-fill"></i>
+                </div>
+                <div class="form-header-text">
+                    <h2>New story</h2>
+                    <p>Share your thoughts with the world</p>
+                </div>
+            </div>
+
+            <form action="/blog/add" method="POST" enctype="multipart/form-data">
+
+                <div class="field-group">
+                    <label class="field-label" for="title">Title</label>
+                    <input id="title" type="text" name="title" class="field-input title-input"
+                        placeholder="Your story begins here…" maxlength="120"
+                        oninput="document.getElementById('title-count').textContent = this.value.length + ' / 120'"
+                        required>
+                    <div class="char-hint" id="title-count">0 / 120</div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="body">Body</label>
+                    <textarea id="body" name="body" class="field-input"
+                        placeholder="Write something the world needs to read…" maxlength="5000"
+                        oninput="document.getElementById('body-count').textContent = this.value.length + ' / 5000'"
+                        required></textarea>
+                    <div class="char-hint" id="body-count">0 / 5000</div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Cover image</label>
+                    <div class="upload-zone" id="upload-zone">
+                        <input type="file" name="coverImage" accept="image/*" id="file-input" onchange="handleFile(event)">
+                        <div id="upload-empty">
+                            <div class="upload-icon"><i class="bi bi-image"></i></div>
+                            <p class="upload-title">Drop an image or click to browse</p>
+                            <p class="upload-hint">PNG, JPG, WEBP — up to 10 MB</p>
+                        </div>
+                        <div class="upload-preview" id="upload-preview">
+                            <img class="preview-thumb" id="preview-thumb" src="" alt="Cover preview">
+                            <div style="min-width:0; flex:1;">
+                                <p class="preview-name" id="preview-name"></p>
+                                <p class="preview-meta" id="preview-meta"></p>
+                            </div>
+                            <button type="button" class="preview-remove" onclick="removeFile(event)">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="form-footer">
+                    <button type="button" class="btn-draft">
+                        <i class="bi bi-bookmark"></i> Save draft
+                    </button>
+                    <button type="submit" class="btn-publish">
+                        <i class="bi bi-send-fill"></i> Publish
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <%- include('./partials/script') %>
+
+    <script>
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('preview-thumb').src = e.target.result;
+                document.getElementById('preview-name').textContent = file.name;
+                const size = file.size > 1024 * 1024
+                    ? (file.size / 1024 / 1024).toFixed(2) + ' MB'
+                    : (file.size / 1024).toFixed(0) + ' KB';
+                document.getElementById('preview-meta').textContent = size;
+                document.getElementById('upload-empty').style.display = 'none';
+                document.getElementById('upload-preview').style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeFile(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            document.getElementById('file-input').value = '';
+            document.getElementById('preview-thumb').src = '';
+            document.getElementById('upload-empty').style.display = '';
+            document.getElementById('upload-preview').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

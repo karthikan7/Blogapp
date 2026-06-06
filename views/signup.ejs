@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Sign Up</title>
+</head>
+<body>
+
+    
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Create Account</h2>
+
+        <form action="/user/signup" method="POST">
+
+            <div class="mb-3">
+                <label for="fullname" class="form-label">Full Name</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="fullname"
+                    name="fullname"
+                    placeholder="Enter your full name"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
+                <div class="form-text">
+                    We'll never share your email with anyone else.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Sign Up
+            </button>
+
+        </form>
+    </div>
+
+    
+
+</body>
+</html>
