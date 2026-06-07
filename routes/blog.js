@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 // multer handles file uploads
@@ -7,21 +6,28 @@ const path = require("path");
 const Blog = require("../models/blog");
 const Comment = require("../models/comment");
 
+// NEW: cloudinary = cloud storage service that saves images permanently online
+const cloudinary = require('cloudinary').v2;
+// NEW: multer-storage-cloudinary = connects multer and cloudinary together
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// diskStorage = save file on our computer (not memory)
-const storage = multer.diskStorage({
-// destination = which folder to save the file in
-    destination: (req, file, cb) => {
-        cb(null, "public/uploads");  // saves inside public/uploads/
-    },
+// NEW: tell cloudinary who we are using our .env credentials
+// without this cloudinary won't accept our images
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+});
 
-    // filename = what name to give the saved file
-    filename: (req, file, cb) => {
-        // unique number so two files never have same name
-        const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        // extname gets the extension e.g. .jpg .png
-        cb(null, unique + path.extname(file.originalname));
-        // final name looks like: 1719123456789-385729384.jpg
+// REMOVED: diskStorage = save file on our computer (not memory)
+// NEW: CloudinaryStorage = save file on Cloudinary (cloud) not our server
+const storage = new CloudinaryStorage({
+// NEW: folder = which folder inside Cloudinary to save the image in
+    cloudinary,
+    params: {
+        folder: 'blogify',
+// NEW: allowed_formats = only accept these image types, reject others
+        allowed_formats: ['jpg', 'png', 'jpeg'],
     },
 });
 
@@ -91,12 +97,15 @@ router.post("/add", upload.single("coverImage"), async (req, res) => {
     const { title, body } = req.body;
 
     // req.file has the uploaded image info (added by multer)
-    // if user uploaded a file → save its path
+    // REMOVED: if user uploaded a file → save its path (local server path)
+    // NEW: if user uploaded a file → save cloudinary URL
+    // example URL: https://res.cloudinary.com/dn5xzdjkh/image/upload/blogify/abc123.jpg
     // if user did not upload  → save null
-    const coverImage = req.file ? "/uploads/" + req.file.filename : null;
+    const coverImage = req.file ? req.file.path : null;
+    // NEW: req.file.path gives cloudinary URL instead of local filename
 
-  
     // save everything to MongoDB
+    // NEW: coverImage now stores a permanent Cloudinary URL instead of local path
     await Blog.create({
         title,
         body,
@@ -108,4 +117,3 @@ router.post("/add", upload.single("coverImage"), async (req, res) => {
 });
 
 module.exports = router;
-

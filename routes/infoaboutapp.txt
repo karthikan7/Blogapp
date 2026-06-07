@@ -250,3 +250,10 @@ JWT token = proof user already logged in
 
 req.user  = user information recovered
             from verified token
+
+    multer 
+    User selects image → Form submits → 
+multer reads the image from the request → 
+sends it to Cloudinary → 
+Cloudinary saves it and returns a URL → 
+you save that URL in MongoDB
