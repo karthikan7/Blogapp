@@ -61,19 +61,10 @@ router.get("/add", (req, res) => {
 })// pass user and perticular data using user id so you can show it on page (blog.title)
 
      router.post('/comment/:blogid', async (req, res) => {
-            ///blog/B1
-                // Blog document:
-                // {
-                // _id: "B1",
-                // title: "My First Blog",
-                // body: "Learning Node.js",
-                // createdBy: "U5",
-                // comments: []
-                // }
         if (!req.user) {
         return res.redirect("/user/signin"); //  not logged in, send to signin
     }
-      console.log("req.user =", req.user);        // ← add this
+      console.log("req.user =", req.user);
     console.log("req.user._id =", req.user._id);
 
     const comment = await Comment.create({
@@ -94,26 +85,16 @@ router.get("/add", (req, res) => {
 // upload.single("coverImage") reads the file from the form
 // "coverImage" must match the name="" in your HTML input
 router.post("/add", upload.single("coverImage"), async (req, res) => {
-    const { title, body } = req.body;
+    try {
+        const { title, body } = req.body;
 
-    // req.file has the uploaded image info (added by multer)
-    // REMOVED: if user uploaded a file → save its path (local server path)
-    // NEW: if user uploaded a file → save cloudinary URL
-    // example URL: https://res.cloudinary.com/dn5xzdjkh/image/upload/blogify/abc123.jpg
-    // if user did not upload  → save null
-    const coverImage = req.file ? req.file.path : null;
-    // NEW: req.file.path gives cloudinary URL instead of local filename
+        // req.file has the uploaded image info (added by multer)
+        // REMOVED: if user uploaded a file → save its path (local server path)
+        // NEW: if user uploaded a file → save cloudinary URL
+        // example URL: https://res.cloudinary.com/dn5xzdjkh/image/upload/blogify/abc123.jpg
+        // if user did not upload  → save null
+        const coverImage = req.file ? req.file.path : null;
+        // NEW: req.file.path gives cloudinary URL instead of local filename
 
-    // save everything to MongoDB
-    // NEW: coverImage now stores a permanent Cloudinary URL instead of local path
-    await Blog.create({
-        title,
-        body,
-        coverImage,
-        createdBy: req.user._id,  // logged in user's id that prasent in playload
-    });
-
-    return res.redirect("/");
-});
-
-module.exports = router;
+        // save everything to MongoDB
+        // NEW: coverImage now stores a permanent Cloudinary URL instead of local path
